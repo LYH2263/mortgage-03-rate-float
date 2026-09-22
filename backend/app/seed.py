@@ -8,7 +8,18 @@ def init_db():
     CREATE TABLE IF NOT EXISTS loans(id INTEGER PRIMARY KEY, name TEXT, principal REAL, annual_rate REAL, months INTEGER);
     CREATE TABLE IF NOT EXISTS settings(key TEXT PRIMARY KEY, value TEXT);
     CREATE TABLE IF NOT EXISTS calc_runs(id INTEGER PRIMARY KEY, kind TEXT, loan_id INTEGER, input_json TEXT, result_json TEXT, created_at TEXT);
+    CREATE TABLE IF NOT EXISTS rate_float_events(
+        id INTEGER PRIMARY KEY,
+        loan_id INTEGER NOT NULL,
+        effective_period INTEGER NOT NULL,
+        new_annual_rate REAL NOT NULL,
+        enabled INTEGER NOT NULL DEFAULT 1,
+        note TEXT DEFAULT '',
+        created_at TEXT,
+        updated_at TEXT
+    );
     """)
+    conn.commit()
     if conn.execute("SELECT COUNT(*) c FROM loans").fetchone()["c"] == 0:
         conn.execute("INSERT INTO loans(name,principal,annual_rate,months) VALUES ('首套样例',1000000,3.5,360)")
         conn.execute("INSERT INTO loans(name,principal,annual_rate,months) VALUES ('高利率种子',800000,6.8,240)")
